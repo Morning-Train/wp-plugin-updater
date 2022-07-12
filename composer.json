@@ -3,7 +3,7 @@
     "description": "Add update functionality to plugins from private plugin repo",
     "minimum-stability": "stable",
     "license": "proprietary",
-    "version": "v0.1.0",
+    "version": "v0.2.0",
     "authors": [
         {
             "name": "Martin Schadegg Brønniche",
