@@ -1,4 +1,4 @@
-<?php namespace Morningtrain\WP\PLuginUpdater\Classes;
+<?php namespace Morningtrain\WP\PluginUpdater\Classes;
 
 class PluginUpdater {
 
