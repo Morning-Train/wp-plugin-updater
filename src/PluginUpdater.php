@@ -35,7 +35,7 @@ class PluginUpdater {
      */
     public function deleteTransientAfterUpdate($upgrader_object, $options) {
         if($options['action'] == 'update' && $options['type'] === 'plugin')  {
-            delete_transient( $this->plugin_slug . '_plugin_info_json');
+            delete_transient( $this->plugin_slug . '_plugin_info');
         }
     }
 
@@ -88,7 +88,11 @@ class PluginUpdater {
             return $transient;
         }
 
-        if(version_compare($this->plugin_version, $plugin_remote->version, '>=') || version_compare($plugin_remote->requires, get_bloginfo('version'), '>')) {
+        // The version on disk, not $this->plugin_version: right after an update WordPress rebuilds this transient
+        // in the same request, while the old code – and the old version number – is still loaded.
+        $installed_version = $transient->checked[$this->base_name] ?? $this->plugin_version;
+
+        if(version_compare($installed_version, $plugin_remote->version, '>=') || version_compare($plugin_remote->requires, get_bloginfo('version'), '>')) {
             return $transient;
         }
 
