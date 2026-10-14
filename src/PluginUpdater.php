@@ -21,7 +21,7 @@ class PluginUpdater {
      * @return void
      */
     protected function init() {
-        add_filter('plugin_api', [$this, 'getPluginInfo'], 10, 3);
+        add_filter('plugins_api', [$this, 'getPluginInfo'], 10, 3);
         add_filter('pre_set_site_transient_update_plugins', [$this, 'setUpdatePluginsTransient']);
 
         add_action('upgrader_process_complete', [$this, 'deleteTransientAfterUpdate'], 10, 2);
@@ -57,18 +57,23 @@ class PluginUpdater {
             return $res;
         }
 
-        $res = $this->getPluginRemote();
+        $plugin_remote = $this->getPluginRemote();
 
-        if(isset($res->sections)) {
-            foreach($res->sections as &$section) {
+        // Repository unreachable or answered with something else: let WordPress carry on as without us.
+        if(empty($plugin_remote) || !isset($plugin_remote->name)) {
+            return $res;
+        }
+
+        if(isset($plugin_remote->sections)) {
+            foreach($plugin_remote->sections as &$section) {
                 $section = html_entity_decode($section);
             }
         }
 
-        $res->slug = $this->plugin_slug;
-        $res->plugin = $this->base_name;
+        $plugin_remote->slug = $this->plugin_slug;
+        $plugin_remote->plugin = $this->base_name;
 
-        return $res;
+        return $plugin_remote;
     }
 
     /**
